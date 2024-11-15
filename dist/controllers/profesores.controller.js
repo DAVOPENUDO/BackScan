@@ -60,6 +60,7 @@ const getHorarioIdClass = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getHorarioIdClass = getHorarioIdClass;
+
 const getAlumsAsistidos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { codigo } = req.params;
     try {
@@ -70,6 +71,7 @@ const getAlumsAsistidos = (req, res) => __awaiter(void 0, void 0, void 0, functi
         res.json(ex);
     }
 });
+
 exports.getAlumsAsistidos = getAlumsAsistidos;
 const getHistorialListas = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { grado, grupo, clase } = req.params;
@@ -81,6 +83,7 @@ const getHistorialListas = (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(404).json(ex);
     }
 });
+
 exports.getHistorialListas = getHistorialListas;
 const postListaHoy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { codigo } = req.body;
@@ -93,6 +96,8 @@ const postListaHoy = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.json(ex);
     }
 });
+
+
 exports.postListaHoy = postListaHoy;
 const postHorario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { horaInit, horaFin, salon, idDiaSemana } = req.body;
@@ -105,6 +110,7 @@ const postHorario = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.json(ex);
     }
 });
+
 exports.postHorario = postHorario;
 const postPassList = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { codigo, matricula } = req.params;
@@ -119,6 +125,7 @@ const postPassList = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.postPassList = postPassList;
+
 const getCodigoClass = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idHorario } = req.params;
     try {
@@ -129,12 +136,13 @@ const getCodigoClass = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.json(ex);
     }
 });
+
 exports.getCodigoClass = getCodigoClass;
 const postClase = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { matricula } = req.params;
-    const { nombre, grado, grupo } = req.body;
+    const { nombre, grupo } = req.body;
     try {
-        const result = yield profesor.CrearClase(conect_1.default, nombre, grado, grupo, matricula);
+        const result = yield profesor.CrearClase(conect_1.default, nombre, grupo, matricula);
         res.json(result);
     }
     catch (ex) {
