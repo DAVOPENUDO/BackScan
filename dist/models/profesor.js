@@ -22,25 +22,31 @@ class Profesor {
     }
     ObtenerHorarioHoy(db, matricula, dia) {
         return new Promise((resolve, reject) => {
-            const consulta = `SELECT  c.idClase, p.matricula, p.nombre, c.nombre as 'clase', c.grado, c.grupo, h.horaInit, h.horaFin, h.salon,d.nombre as 'diassemana' ,h.idHorario
-            FROM clases as c, profesor as p , horario as h, diasSemana as d 
-            WHERE p.matricula=? and d.nombre=? and p.matricula=c.matriculaProfe and c.idClase=h.idClase and h.idDiaSemana=d.idDiaSemana`;
+            const consulta = `
+            SELECT c.idClase , p.matricula, p.nombre, c.nombre as 'clase', c.grupo, h.horaInit , h.horaFin , h.salon, d.nombre as 'diassemana', h.idHorario  
+            FROM clases as c 
+            JOIN profesores as p ON p.matricula  = c.matriculaProfe 
+            JOIN horario as h ON c.idClase  = h.idClase  
+            JOIN diassemana as d ON h.idDiaSemana = d.idDiaSemana  
+            WHERE p.matricula = ? AND d.nombre = ?`;
+            
             db.query(consulta, [matricula, dia], (err, clases) => {
                 if (err) {
-                    reject({ msj: 'Error al obtener la consulta' });
-                }
-                else {
-                    if (clases.length > 0)
+                    reject({ msj: 'Error al obtener la consulta', error: err });
+                } else {
+                    if (clases.length > 0) {
                         resolve({ clases });
-                    else
+                    } else {
                         reject({ msj: 'No hay clases para el dia de hoy' });
+                    }
                 }
             });
         });
     }
+    
     ObtenerHorarioClassId(db, idClase) {
         return new Promise((resolve, reject) => {
-            const consulta = `SELECT c.idClase, h.idHorario,c.nombre as 'clase',  h.horaInit, h.horaFin, h.salon, d.nombre as 'diasemana', c.grado, c.grupo 
+            const consulta = `SELECT c.idClase, h.idHorario,c.nombre as 'clase',  h.horaInit, h.horaFin, h.salon, d.nombre as 'diasemana', c.grupo 
             FROM horario as h, clases as c, diasSemana as d 
             WHERE h.idClase=c.idClase and h.idDiaSemana=d.idDiaSemana and c.idClase=?;`;
             db.query(consulta, [idClase], (err, horario) => {
@@ -58,29 +64,34 @@ class Profesor {
             });
         });
     }
+
     ObtenerAlumnosAsistidos(db, codigo) {
         return new Promise((resolve, reject) => {
             const consulta = `
-            SELECT  la.matriculaAlum, a.nombre, apellidoPa, apellidoMa, dia, la.hora as 'hora registrado'
-            FROM listaAlums as la, alumnos as a, lista as li, horario as h, clases as c 
-            WHERE la.matriculaAlum=a.matriculaAlum and la.codigo=li.codigo and li.idHorario=h.idHorario and h.idClase=c.idClase and li.codigo=?;`;
+             SELECT la.matriculaAlum, a.nombre, a.apellido_pa, a.apellido_ma, h.idDiaSemana AS dia, la.hora AS 'hora_registrado' 
+             FROM listaAlums AS la JOIN alumnos AS a ON la.matriculaAlum = a.matriculaAlum 
+             JOIN lista AS li ON la.codigo = li.codigo 
+             JOIN horario AS h ON li.idHorario = h.idHorario 
+             JOIN clases AS c ON h.idClase = c.idClase WHERE li.codigo=?;`; // Asegúrate de que 'codigo' es el id correcto para la consulta
+    
             db.query(consulta, [codigo], (err, results) => {
                 if (err) {
                     reject({ msj: 'Error al obtener la consulta', err });
-                }
-                else {
-                    if (results.length > 0)
+                } else {
+                    if (results.length > 0) {
                         resolve({ alumsAsist: results, status: true });
-                    else
-                        reject({ msj: 'No hay alumnos asistidos', status: false });
+                    } else {
+                        reject({ msj: 'No hay empleados asistidos', status: false });
+                    }
                 }
             });
         });
     }
+    
+
     ObtenerClasesProfesor(db, matricula) {
         return new Promise((resolve, reject) => {
-            const consulta = `SELECT c.idClase, c.nombre as 'clase' , c.grado, c.grupo FROM clases as c, profesor as p 
-                            WHERE c.matriculaProfe=p.matricula and p.matricula=?;`;
+            const consulta = `SELECT c.idClase, c.nombre as 'clase' , c.grupo FROM clases as c, profesores as p WHERE c.matriculaProfe=p.matricula and p.matricula=?;`;
             db.query(consulta, [matricula], (err, results) => {
                 if (err) {
                     reject({ msj: 'Error al obtener la consulta' });
@@ -96,21 +107,28 @@ class Profesor {
     }
     ObtenerCodigoClaseHoy(db, idHorario) {
         return new Promise((resolve, reject) => {
-            const consulta = `SELECT l.codigo ,c.nombre FROM lista AS l, horario AS h, clases AS c 
-            WHERE l.idHorario=h.idHorario AND c.idClase=h.idClase AND l.dia=CURDATE() AND h.idHorario=? ;`;
+            const consulta = `
+                SELECT l.codigo, c.nombre 
+                FROM lista AS l 
+                JOIN horario AS h ON l.idHorario = h.idHorario  
+                JOIN clases AS c ON h.idClase  = c.idClase  
+                WHERE l.dia = CURDATE() AND h.idHorario  = ?;
+            `;
             db.query(consulta, [idHorario], (err, results) => {
                 if (err) {
+                    console.error('Error en la consulta:', err);
                     reject({ msj: 'Error al obtener la consulta' });
-                }
-                else {
-                    if (results.length > 0)
+                } else {
+                    if (results.length > 0) {
                         resolve({ results });
-                    else
-                        reject({ msj: 'La clase no tiene codigo asociado el da de hoy', status: false });
+                    } else {
+                        reject({ msj: 'La clase no tiene código asociado el día de hoy', status: false });
+                    }
                 }
             });
         });
     }
+    
     ObtenerHistorialLista(db, grado, grupo, clase) {
         return new Promise((resolve, reject) => {
             const consulta = `SELECT li.dia as 'fecha' , li.codigo, di.nombre as 'diasemana', c.nombre as 'clase' , c.grado, c.grupo
@@ -131,7 +149,7 @@ class Profesor {
     }
     CrearListaHoy(db, codigo, horario) {
         return new Promise((resolve, reject) => {
-            const consulta = `INSERT INTO lista(codigo, dia, idHorario) VALUES (?,NOW(),?)`;
+            const consulta = `INSERT INTO lista(id ,codigo, dia, idHorario) VALUES (null,?,NOW(),?)`;
             db.query(consulta, [
                 codigo, horario //, limite, duracion
             ], (err, result) => {
@@ -168,14 +186,14 @@ class Profesor {
             });
         });
     }
-    CrearClase(db, nombre, grado, grupo, matricula) {
+    CrearClase(db, nombre, grupo, matricula) {
         return new Promise((resolve, reject) => {
-            let consulta = `INSERT INTO clases(nombre, grado, grupo, matriculaProfe) VALUES (?, ?, ?, ?);`;
-            db.query(consulta, [nombre, grado, grupo, matricula], (err, result) => {
+            let consulta = `INSERT INTO clases(idClase ,nombre, grupo, matriculaProfe ) VALUES (null ,?, ?, ?);`;
+            db.query(consulta, [nombre, grupo, matricula], (err, result) => {
                 if (err)
-                    reject({ msj: 'Error al realizar el registro de la clase', status: false });
+                    reject({ msj: 'Error al realizar el registro de la area', status: false });
                 else
-                    resolve({ msj: 'La clase a sido agregada con exito', status: true });
+                    resolve({ msj: 'El area a sido agregada con exito', status: true });
             });
         });
     }
