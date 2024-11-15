@@ -14,7 +14,7 @@ class Auth {
     AutenticarProfesor(con, matricula, password) {
         return new Promise((resolve, reject) => {
             con.query({
-                sql: 'SELECT * FROM profesor where matricula=? ',
+                sql: 'SELECT * FROM profesores where matricula=? ',
                 values: [matricula]
             }, (err, results) => {
                 if (err) {
@@ -88,7 +88,7 @@ class Auth {
     ProfExiste(con, matricula) {
         return new Promise((resolve, reject) => {
             con.query({
-                sql: 'SELECT * FROM profesor where matricula=? ',
+                sql: 'SELECT * FROM profesores where matricula=? ',
                 values: [matricula]
             }, (err, results) => {
                 if (err) {
