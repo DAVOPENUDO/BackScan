@@ -12,142 +12,58 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postClase = exports.getCodigoClass = exports.postPassList = exports.postHorario = exports.postListaHoy = exports.getHistorialListas = exports.getAlumsAsistidos = exports.getHorarioIdClass = exports.getHorarioHoy = exports.getClases = exports.getHorarioProfe = void 0;
+exports.exProf = exports.exAlums = exports.authAlums = exports.authProfes = exports.raiz = void 0;
 const conect_1 = __importDefault(require("../db/conect"));
-const profesor_1 = __importDefault(require("../models/profesor"));
-const profesor = new profesor_1.default();
-const getHorarioProfe = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const auth_1 = __importDefault(require("../models/auth"));
+const auth = new auth_1.default();
+const raiz = (req, res) => {
+    res.json({ msj: 'Ruta para autenticar usuarios de la app' });
+};
+exports.raiz = raiz;
+const authProfes = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { matricula } = req.params;
+    const { password } = req.body;
+    try {
+        const resutl = yield auth.AutenticarProfesor(conect_1.default, matricula, password);
+        res.json(resutl);
+    }
+    catch (ex) {
+        res.json(ex);
+    }
+});
+exports.authProfes = authProfes;
+const authAlums = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { matricula } = req.params;
+    const { password } = req.body;
+    try {
+        const result = yield auth.AutenticarAlumno(conect_1.default, matricula, password);
+        res.json(result);
+    }
+    catch (ex) {
+        res.json(ex);
+    }
+});
+exports.authAlums = authAlums;
+const exAlums = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { matricula } = req.params;
     try {
-        const result = yield profesor.ObtenerHorarioProfesor(conect_1.default, matricula);
-        res.json(result);
-    }
-    catch (ex) {
-        res.json(ex);
-    }
-});
-exports.getHorarioProfe = getHorarioProfe;
-const getClases = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { matricula } = req.params;
-    try {
-        const result = yield profesor.ObtenerClasesProfesor(conect_1.default, matricula);
-        res.json(result);
-    }
-    catch (ex) {
-        res.json(ex);
-    }
-});
-exports.getClases = getClases;
-const getHorarioHoy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { matricula, dia } = req.params;
-    try {
-        const resultado = yield profesor.ObtenerHorarioHoy(conect_1.default, matricula, dia);
-        res.json(resultado);
-    }
-    catch (ex) {
-        res.json(ex);
-    }
-});
-exports.getHorarioHoy = getHorarioHoy;
-const getHorarioIdClass = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { idClase } = req.params;
-    try {
-        const result = yield profesor.ObtenerHorarioClassId(conect_1.default, idClase);
-        res.json(result);
-    }
-    catch (ex) {
-        res.json(ex);
-    }
-});
-exports.getHorarioIdClass = getHorarioIdClass;
-
-const getAlumsAsistidos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { codigo } = req.params;
-    try {
-        const result = yield profesor.ObtenerAlumnosAsistidos(conect_1.default, codigo);
-        res.json(result);
-    }
-    catch (ex) {
-        res.json(ex);
-    }
-});
-
-exports.getAlumsAsistidos = getAlumsAsistidos;
-const getHistorialListas = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { grado, grupo, clase } = req.params;
-    try {
-        const result = yield profesor.ObtenerHistorialLista(conect_1.default, grado, grupo, clase);
+        const result = yield auth.AlumExiste(conect_1.default, matricula);
         res.json(result);
     }
     catch (ex) {
         res.status(404).json(ex);
     }
 });
-
-exports.getHistorialListas = getHistorialListas;
-const postListaHoy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { codigo } = req.body;
-    const { horario } = req.params;
+exports.exAlums = exAlums;
+const exProf = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { matricula } = req.params;
     try {
-        const result = yield profesor.CrearListaHoy(conect_1.default, codigo, horario);
-        res.json(result);
-    }
-    catch (ex) {
-        res.json(ex);
-    }
-});
-
-
-exports.postListaHoy = postListaHoy;
-const postHorario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { horaInit, horaFin, salon, idDiaSemana } = req.body;
-    const { idClase } = req.params;
-    try {
-        const result = yield profesor.CrearHorario(conect_1.default, idClase, horaInit, horaFin, salon, idDiaSemana);
-        res.json(result);
-    }
-    catch (ex) {
-        res.json(ex);
-    }
-});
-
-exports.postHorario = postHorario;
-const postPassList = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { codigo, matricula } = req.params;
-    try {
-        const alumno = yield profesor.BuscarAlumno(conect_1.default, matricula);
-        const { matriculaAlum } = alumno;
-        const result = yield profesor.RegistrarAlumnoListaHoy(conect_1.default, codigo, matriculaAlum);
+        const result = yield auth.ProfExiste(conect_1.default, matricula);
         res.json(result);
     }
     catch (ex) {
         res.status(404).json(ex);
     }
 });
-exports.postPassList = postPassList;
-
-const getCodigoClass = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { idHorario } = req.params;
-    try {
-        const codigo = yield profesor.ObtenerCodigoClaseHoy(conect_1.default, idHorario);
-        res.json(codigo);
-    }
-    catch (ex) {
-        res.json(ex);
-    }
-});
-
-exports.getCodigoClass = getCodigoClass;
-const postClase = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { matricula } = req.params;
-    const { nombre, grupo } = req.body;
-    try {
-        const result = yield profesor.CrearClase(conect_1.default, nombre, grupo, matricula);
-        res.json(result);
-    }
-    catch (ex) {
-        res.json(ex);
-    }
-});
-exports.postClase = postClase;
-//# sourceMappingURL=profesores.controller.js.map
+exports.exProf = exProf;
+//# sourceMappingURL=autenticador.js.map
