@@ -18,17 +18,39 @@ const raiz = (req, res) => {
     res.json({ msj: 'Ruta para realizar registros' });
 };
 exports.raiz = raiz;
-const postProfesor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const {  matricula, nombre, apellidoPa, apellidoMa, password } = req.body;
-    conect_1.default.query("INSERT INTO profesores VALUES (?,?,?,?,?);", [matricula.trim(), nombre.trim(), apellidoPa.trim(), apellidoMa.trim(), password.trim()], (err, result) => {
-        if (err) {
-            res.json({ msj: 'Error al registrar al profesores', "status": false });
+
+const postProfesor = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
+{
+        /*const {  matricula, nombre, apellidoPa, apellidoMa, password } = req.body;
+        conect_1.default.query("INSERT INTO profesores VALUES (?,?,?,?,?);", [matricula.trim(), nombre.trim(), apellidoPa.trim(), apellidoMa.trim(), password.trim()], (err, result) => {
+            if (err) {
+                res.json({ msj: 'Error al registrar al profesores', "status": false });
+            }
+            else {
+                res.json({ msj: 'Se ha registrado correctamente el Profesor ' + nombre, "status": true });
+            }
+        });  
+    });*/
+
+
+        const {  matricula, nombre, apellidoPa, apellidoMa, password } = req.body;
+        if (!matricula || !nombre || !apellidoPa || !apellidoMa || !password) {
+            return res.status(400).json({ msj: 'Todos los campos son requeridos', status: false });
         }
-        else {
-            res.json({ msj: 'Se ha registrado correctamente el Profesor ' + nombre, "status": true });
-        }
-    });
+
+        conect_1.default.query("INSERT INTO profesores VALUES (?,?,?,?,?);", 
+        [matricula.trim(), nombre.trim(), apellidoPa.trim(), apellidoMa.trim(), password.trim()], 
+        (err, result) => {
+            if (err) {
+                res.json({ msj: 'Error al registrar al profesor', status: false });
+            } else {
+                res.json({ msj: `Se ha registrado correctamente el Profesor ${nombre}`, status: true });
+            }
+        }); 
+
 });
+
+
 exports.postProfesor = postProfesor;
 const postAlumno = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { matricula, nombre, apellidoPa, apellidoMa, grupo, password } = req.body;
