@@ -32,7 +32,6 @@ const postProfesor = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         });  
     });*/
 
-
         const {  matricula, nombre, apellidoPa, apellidoMa, password } = req.body;
         if (!matricula || !nombre || !apellidoPa || !apellidoMa || !password) {
             return res.status(400).json({ msj: 'Todos los campos son requeridos', status: false });
