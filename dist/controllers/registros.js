@@ -43,8 +43,10 @@ const postProfesor = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         (err, result) => {
             if (err) {
                 res.json({ msj: 'Error al registrar al profesor', status: false });
+                console.log(req.body);
             } else {
                 res.json({ msj: `Se ha registrado correctamente el Profesor ${nombre}`, status: true });
+                console.log(req.body);
             }
         }); 
 
