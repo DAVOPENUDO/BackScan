@@ -21,18 +21,20 @@ exports.raiz = raiz;
 
 const postProfesor = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 {
-        /*const {  matricula, nombre, apellidoPa, apellidoMa, password } = req.body;
+        const {  matricula, nombre, apellidoPa, apellidoMa, password } = req.body;
         conect_1.default.query("INSERT INTO profesores VALUES (?,?,?,?,?);", [matricula.trim(), nombre.trim(), apellidoPa.trim(), apellidoMa.trim(), password.trim()], (err, result) => {
             if (err) {
                 res.json({ msj: 'Error al registrar al profesores', "status": false });
+                console.log(req.body);
             }
             else {
                 res.json({ msj: 'Se ha registrado correctamente el Profesor ' + nombre, "status": true });
+                console.log(req.body);
             }
         });  
-    });*/
+    });
 
-        const {  matricula, nombre, apellidoPa, apellidoMa, password } = req.body;
+        /*const {  matricula, nombre, apellidoPa, apellidoMa, password } = req.body;
         if (!matricula || !nombre || !apellidoPa || !apellidoMa || !password) {
             return res.status(400).json({ msj: 'Todos los campos son requeridos', status: false });
         }
@@ -49,7 +51,7 @@ const postProfesor = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             }
         }); 
 
-});
+});*/
 
 
 exports.postProfesor = postProfesor;
